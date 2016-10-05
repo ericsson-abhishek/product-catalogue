@@ -23,7 +23,7 @@ public abstract class ProductCatalogueDao {
 	public static ProductEntity createProduct(Product product) {
 		EntityManager theManager = PersistanceUtil.createEntityManager();
 		theManager.getTransaction().begin();
-		ProductEntity productEntity = new ProductEntity(product.getBrandName(), product.getModel(), product.getColor());
+		ProductEntity productEntity = new ProductEntity(product.getBrandName(), product.getModel(), product.getColor(),product.getProductType());
 		theManager.persist(productEntity);
 		theManager.getTransaction().commit();
 		LOGGER.info("Product created successfully for " + product);

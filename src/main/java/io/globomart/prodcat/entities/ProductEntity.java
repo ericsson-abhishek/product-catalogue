@@ -16,14 +16,24 @@ public class ProductEntity {
 	private String brandName;
 	private String model;
 	private String color;
+	private String productType;
+
+	public String getProductType() {
+		return productType;
+	}
+
+	public void setProductType(String productType) {
+		this.productType = productType;
+	}
 
 	public ProductEntity() {
 	}
 
-	public ProductEntity(String brandName, String model, String color) {
+	public ProductEntity(String brandName, String model, String color,String productType) {
 		this.brandName = brandName;
 		this.model = model;
 		this.color = color;
+		this.productType = productType;
 	}
 
 	public Integer getProductId() {

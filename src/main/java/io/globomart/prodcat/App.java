@@ -12,6 +12,18 @@ public class App {
 	
 	public static void main(String[] args) throws Exception {
 
+		Server server = createServer();
+		
+		try {
+			server.start();
+			server.join();
+		} finally {
+			server.destroy();
+		}
+		
+	}
+
+	public static Server createServer() throws Exception, InterruptedException {
 		String PORT = System.getenv("PORT");
 		if(PORT == null || PORT.isEmpty())
 		{
@@ -40,11 +52,6 @@ public class App {
 		// add PersistanceUtil as a servletContexttlistener
 		context.addEventListener(new PersistanceUtil());
 
-		try {
-			server.start();
-			server.join();
-		} finally {
-			server.destroy();
-		}
+		return server;
 	}
 }

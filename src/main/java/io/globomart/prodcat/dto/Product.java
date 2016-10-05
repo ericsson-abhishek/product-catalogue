@@ -5,6 +5,7 @@ public class Product {
 	private String brandName;
 	private String model;
 	private String color;
+	private String productType;
 
 	public int getProductId() {
 		return productId;
@@ -38,11 +39,12 @@ public class Product {
 		this.color = color;
 	}
 
-	public Product(int productId, String brandName, String model, String color) {
+	public Product(int productId, String brandName, String model, String color,String productType) {
 		this.productId = productId;
 		this.brandName = brandName;
 		this.model = model;
 		this.color = color;
+		this.productType = productType;
 	}
 	
 	
@@ -69,5 +71,13 @@ public class Product {
 		builder.append(color);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public String getProductType() {
+		return productType;
+	}
+
+	public void setProductType(String productType) {
+		this.productType = productType;
 	}
 }

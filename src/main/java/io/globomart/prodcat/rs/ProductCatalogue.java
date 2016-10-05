@@ -38,6 +38,8 @@ public class ProductCatalogue {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ProductCatalogue.class);
 
+	
+	
 	@GET
 	@Path("products")
 	@Produces(MediaType.APPLICATION_JSON)
