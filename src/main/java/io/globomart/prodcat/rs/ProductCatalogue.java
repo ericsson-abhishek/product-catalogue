@@ -72,7 +72,7 @@ public class ProductCatalogue {
 	@Path("products/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Return a single product with specific id", response = Product.class)
-	public Response getProducts(@PathParam(value = "id") int prodId) {
+	public Response getProductById(@PathParam(value = "id") int prodId) {
 		ProductEntity product = ProductCatalogueDao.getProduct(prodId);
 		Response res = null;
 		if (product != null) {
@@ -80,7 +80,7 @@ public class ProductCatalogue {
 			res = Response.ok().entity(product).build();
 		} else {
 			LOGGER.warn("Could not find Product for id ={}", prodId);
-			res = Response.status(Status.NOT_FOUND).entity("Product does not exist!").build();
+			res = Response.status(Status.NOT_FOUND).build();
 		}
 		return res;
 	}
@@ -101,7 +101,7 @@ public class ProductCatalogue {
 	@Consumes(MediaType.APPLICATION_JSON)
 	// @ApiOperation(value = "Return a single product with specific id",
 	// response = Product.class)
-	public Response createProduct(@PathParam(value = "id") int prodId)
+	public Response deleteProduct(@PathParam(value = "id") int prodId)
 			throws JsonParseException, JsonMappingException, IOException {
 		Response result;
 		ProductEntity productEn = ProductCatalogueDao.removeProduct(prodId);
