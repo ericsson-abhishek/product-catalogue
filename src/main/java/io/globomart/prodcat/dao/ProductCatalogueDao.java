@@ -21,11 +21,12 @@ public abstract class ProductCatalogueDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProductCatalogueDao.class);
 
 	public static ProductEntity createProduct(Product product) {
-		EntityManager theManager = PersistanceUtil.createEntityManager();
-		theManager.getTransaction().begin();
-		ProductEntity productEntity = new ProductEntity(product.getBrandName(), product.getModel(), product.getColor(),product.getProductType());
-		theManager.persist(productEntity);
-		theManager.getTransaction().commit();
+		EntityManager entityManager = PersistanceUtil.createEntityManager();
+		entityManager.getTransaction().begin();
+		ProductEntity productEntity = new ProductEntity(product.getBrandName(), product.getModel(), product.getColor(),
+				product.getProductType());
+		entityManager.persist(productEntity);
+		entityManager.getTransaction().commit();
 		LOGGER.info("Product created successfully for " + product);
 		return productEntity;
 	}
@@ -36,9 +37,23 @@ public abstract class ProductCatalogueDao {
 		return result;
 	}
 
-	public static ProductEntity getProducts(int prodId) {
+	public static ProductEntity getProduct(int prodId) {
 		EntityManager entityManager = PersistanceUtil.createEntityManager();
 		return entityManager.find(ProductEntity.class, prodId);
+	}
+
+	public static ProductEntity removeProduct(int prodId) {
+		ProductEntity result = null;
+		EntityManager entityManager = PersistanceUtil.createEntityManager();
+		ProductEntity productToRemove = entityManager.find(ProductEntity.class, prodId);
+		if (productToRemove != null) {
+			entityManager.getTransaction().begin();
+			entityManager.remove(productToRemove);
+			entityManager.getTransaction().commit();
+			result = productToRemove;
+		}
+		
+		return result;
 	}
 
 	private static CriteriaQuery<ProductEntity> queryBuilder(EntityManager entityManager,

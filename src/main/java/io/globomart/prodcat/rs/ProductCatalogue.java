@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -35,43 +36,35 @@ import io.swagger.annotations.ApiOperation;
 @Path("prodcat")
 @Api(value = "/prodcat")
 public class ProductCatalogue {
-	
+
 	private static Logger LOGGER = LoggerFactory.getLogger(ProductCatalogue.class);
 
-	
-	
 	@GET
 	@Path("products")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Return all products", response = List.class)
 	public Response getProducts(@Context UriInfo uriInfo) throws SQLException {
-		
-		MultivaluedMap<String, String> queryParams  = uriInfo.getQueryParameters();
-		LOGGER.debug("the query params are{}",queryParams);
-		
+
+		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
+		LOGGER.debug("the query params are{}", queryParams);
+
 		Map<String, String> filter = null;
-		if(queryParams!=null)
-		{
+		if (queryParams != null) {
 			filter = createFilterFromQueryParams(queryParams);
 		}
-		
-		
+
 		List<ProductEntity> productList = ProductCatalogueDao.getProducts(filter);
 		return Response.ok().entity(productList)
-				.header("Access-Control-Allow-Origin", "*")
-				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-				.allow("OPTIONS")
 				.build();
 	}
 
 	private Map<String, String> createFilterFromQueryParams(MultivaluedMap<String, String> queryParams) {
-		Map<String, String> filter =  new HashMap<>();
-		for(Entry<String,List<String>> queryParam :queryParams.entrySet())
-		{
-			//TODO require NULL checks
+		Map<String, String> filter = new HashMap<>();
+		for (Entry<String, List<String>> queryParam : queryParams.entrySet()) {
+			// TODO require NULL checks
 			filter.put(queryParam.getKey(), queryParam.getValue().get(0));
 		}
-		
+
 		return filter;
 	}
 
@@ -80,17 +73,14 @@ public class ProductCatalogue {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Return a single product with specific id", response = Product.class)
 	public Response getProducts(@PathParam(value = "id") int prodId) {
-		ProductEntity product = ProductCatalogueDao.getProducts(prodId);
+		ProductEntity product = ProductCatalogueDao.getProduct(prodId);
 		Response res = null;
-		if(product!=null)
-		{
-			LOGGER.debug("Successfully fetched Product for id ={}",prodId);
-			res =  Response.ok().entity(product).build();
-		}
-		else
-		{
-			LOGGER.warn("Could not find Product for id ={}",prodId);
-			res =  Response.status(Status.NOT_FOUND).build();
+		if (product != null) {
+			LOGGER.debug("Successfully fetched Product for id ={}", prodId);
+			res = Response.ok().entity(product).build();
+		} else {
+			LOGGER.warn("Could not find Product for id ={}", prodId);
+			res = Response.status(Status.NOT_FOUND).entity("Product does not exist!").build();
 		}
 		return res;
 	}
@@ -101,13 +91,27 @@ public class ProductCatalogue {
 	// @ApiOperation(value = "Return a single product with specific id",
 	// response = Product.class)
 	public Response createProduct(Product product) throws JsonParseException, JsonMappingException, IOException {
-		ProductEntity productEn =ProductCatalogueDao.createProduct(product);
-		return Response.ok().entity(productEn)
-				.header("Access-Control-Allow-Origin", "*")
-				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-				.allow("OPTIONS")
-				.build();
+		ProductEntity productEn = ProductCatalogueDao.createProduct(product);
+		return Response.ok().entity(productEn).build();
 
 	}
 
+	@DELETE
+	@Path("products/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	// @ApiOperation(value = "Return a single product with specific id",
+	// response = Product.class)
+	public Response createProduct(@PathParam(value = "id") int prodId)
+			throws JsonParseException, JsonMappingException, IOException {
+		Response result;
+		ProductEntity productEn = ProductCatalogueDao.removeProduct(prodId);
+		if (productEn != null) {
+			LOGGER.debug("Successfully removed Product for id ={}", prodId);
+			result = Response.ok().entity(productEn).build();
+		} else {
+			LOGGER.warn("Could not find Product for id ={}", prodId);
+			result = Response.status(Status.NOT_FOUND.getStatusCode()).entity("Product does not exist!").build();
+		}
+		return result;
+	}
 }
