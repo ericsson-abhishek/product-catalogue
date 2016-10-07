@@ -31,7 +31,10 @@ import io.globomart.prodcat.dao.ProductCatalogueDao;
 import io.globomart.prodcat.dto.Product;
 import io.globomart.prodcat.entities.ProductEntity;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Path("prodcat")
 @Api(value = "/prodcat")
@@ -42,7 +45,15 @@ public class ProductCatalogue {
 	@GET
 	@Path("products")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Return all products", response = List.class)
+	@ApiOperation(value = "Return all products those match the specified all filter criterii (if provided)", response = Product.class, responseContainer="List")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "productId", value = "Id of the product", required = false, dataType = "integer", paramType = "query"),
+		@ApiImplicitParam(name = "brandName", value = "brand name", required = false, dataType = "string", paramType = "query"),
+		@ApiImplicitParam(name = "model", value = "model number", required = false, dataType = "string", paramType = "query"),
+		@ApiImplicitParam(name = "color", value = "Color of the product", required = false, dataType = "string", paramType = "query"),
+		@ApiImplicitParam(name = "productType", value = "Type of product", required = false, dataType = "string", paramType = "query")})
+	
+	
 	public Response getProducts(@Context UriInfo uriInfo) throws SQLException {
 
 		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
@@ -72,7 +83,8 @@ public class ProductCatalogue {
 	@Path("products/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Return a single product with specific id", response = Product.class)
-	public Response getProductById(@PathParam(value = "id") int prodId) {
+	public Response getProductById(@ApiParam(value="ID of the product to be searched", required=true)@PathParam(value = "id") int prodId)
+	{
 		ProductEntity product = ProductCatalogueDao.getProduct(prodId);
 		Response res = null;
 		if (product != null) {
@@ -88,9 +100,8 @@ public class ProductCatalogue {
 	@POST
 	@Path("products")
 	@Consumes(MediaType.APPLICATION_JSON)
-	// @ApiOperation(value = "Return a single product with specific id",
-	// response = Product.class)
-	public Response createProduct(Product product) throws JsonParseException, JsonMappingException, IOException {
+	@ApiOperation(value = "Add a Product in the Product Catalogue", response = Product.class)
+	public Response createProduct(@ApiParam(value="The JSON request for Product to be added", required=true)Product product) throws JsonParseException, JsonMappingException, IOException {
 		ProductEntity productEn = ProductCatalogueDao.createProduct(product);
 		return Response.ok().entity(productEn).build();
 
@@ -99,9 +110,8 @@ public class ProductCatalogue {
 	@DELETE
 	@Path("products/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	// @ApiOperation(value = "Return a single product with specific id",
-	// response = Product.class)
-	public Response deleteProduct(@PathParam(value = "id") int prodId)
+	@ApiOperation(value = "Remove a product from Product catalogue with specific id (if it exists)", response = Product.class)
+	public Response deleteProduct(@ApiParam(value="ID of the product to be removed", required=true)@PathParam(value = "id") int prodId)
 			throws JsonParseException, JsonMappingException, IOException {
 		Response result;
 		ProductEntity productEn = ProductCatalogueDao.removeProduct(prodId);
