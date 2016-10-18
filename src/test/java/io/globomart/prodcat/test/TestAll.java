@@ -31,7 +31,7 @@ public class TestAll {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		server = App.createServer();
+		server = App.createServer(2222);
 		server.start();
 		client = new Client();
 
