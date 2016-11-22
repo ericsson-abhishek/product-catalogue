@@ -1,6 +1,14 @@
 package io.globomart.prodcat;
 
+//
+//c:\Work\nginx>..\consul-template\consul-template.exe -consul localhost:8500 -template "conf\prodcat-template.ctmpl:conf\prodcat.conf:nginx.e
+//xe -s reload"
 import java.util.EnumSet;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.DispatcherType;
 
@@ -19,15 +27,36 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import com.netflix.appinfo.ApplicationInfoManager;
+import com.netflix.appinfo.CloudInstanceConfig;
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.appinfo.MyDataCenterInstanceConfig;
+import com.netflix.appinfo.providers.EurekaConfigBasedInstanceInfoProvider;
+import com.netflix.discovery.DefaultEurekaClientConfig;
+import com.netflix.discovery.DiscoveryClient;
+import com.netflix.discovery.DiscoveryManager;
+import com.netflix.discovery.EurekaClient;
+import com.orbitz.consul.AgentClient;
+import com.orbitz.consul.Consul;
+import com.orbitz.consul.NotRegisteredException;
+
 import io.globomart.prodcat.dao.PersistanceUtil;
 
 public class App {
+	
+	static ScheduledExecutorService execService = Executors.newScheduledThreadPool(1);
+	
+	
 
 	public static void main(String[] args) throws Exception {
+		
+		
 
 		int port = 0;
-		if (args.length > 0) {
+		int instanceId=0;
+		if (args.length > 1) {
 			port = Integer.valueOf(args[0]);
+			instanceId = Integer.valueOf(args[1]);
 		}
 
 		System.out.println("PORT : " + port);
@@ -35,17 +64,68 @@ public class App {
 
 		try {
 			server.start();
-			registerService(port);
+			//registerServiceInZK(port);
+			//registerServiceInConsul(port,instanceId);
+			registerServiceInEureka(port,instanceId);
 			server.join();
 		} catch (Exception e) {
 			e.printStackTrace();
 			server.join();
 		}
+		
+		finally {
+		 execService.shutdown();
+		 }
 
-		// finally {
-		// server.destroy();
-		// }
+	}
 
+	private static void registerServiceInEureka(int port, final int instanceId) throws NotRegisteredException {
+		MyDataCenterInstanceConfig myDataCenterInstanceConfig = new MyDataCenterInstanceConfig();
+		//ApplicationInfoManager applicationInfoManager 
+//		/if (applicationInfoManager == null) {
+			//instanceConfig.getMetadataMap().put("eureka.instance.metadataMap.instanceId", "instance1");
+			
+			InstanceInfo instanceInfo = new EurekaConfigBasedInstanceInfoProvider(myDataCenterInstanceConfig).get();
+			ApplicationInfoManager applicationInfoManager = new ApplicationInfoManager(myDataCenterInstanceConfig, instanceInfo);
+			try{
+			EurekaClient eurekaClient = new DiscoveryClient(applicationInfoManager, new DefaultEurekaClientConfig());
+			}catch( Throwable e)
+			{
+				System.out.println("Exception occurred here");
+				e.printStackTrace();
+			}
+			applicationInfoManager.setInstanceStatus(InstanceInfo.InstanceStatus.UP);
+			//eurekaClient.
+		//}
+		//ApplicationInfoManager applicationInfoManager = initializeApplicationInfoManager(myDataCenterInstanceConfig);
+
+		
+	}
+	
+	private static void registerServiceInConsul(int port, final int instanceId) throws NotRegisteredException {
+		// TODO Auto-generated method stub
+		Consul consul = Consul.builder().build(); // connect to Consul on localhost
+		final AgentClient agentClient = consul.agentClient();
+
+		String serviceName = "prod";
+		final String serviceId = ""+instanceId;
+
+		agentClient.register(port, 5L, serviceName, serviceId); // registers with a TTL of 3 seconds
+		execService.scheduleAtFixedRate((new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					//System.out.println("Check in triggerred for intance id "+serviceId);
+					agentClient.pass(serviceId);
+				} catch (NotRegisteredException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		}),0L, 3L, TimeUnit.SECONDS);
+		
 	}
 
 	public static Server createServer(int port) throws Exception, InterruptedException {
@@ -94,7 +174,7 @@ public class App {
 		return server;
 	}
 
-	public static void registerService(int port) throws Exception {
+	public static void registerServiceInZK(int port) throws Exception {
 		// CuratorFramework curatorFramework =
 		// CuratorFrameworkFactory.newClient("localhost:2181", new
 		// RetryNTimes(5, 1000));

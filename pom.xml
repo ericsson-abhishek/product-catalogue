@@ -4,9 +4,25 @@
 	<groupId>io.globommart.product.catalogue</groupId>
 	<artifactId>product-catalogue</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
+<repositories>
+    <repository>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>central</id>
+        <name>bintray</name>
+        <url>http://jcenter.bintray.com</url>
+    </repository>
+</repositories>
 	<dependencies>
-
+		<!--  Dependency for Consul -->
+	    <dependency>
+	        <groupId>com.orbitz.consul</groupId>
+	        <artifactId>consul-client</artifactId>
+	        <version>0.13.2</version>
+	    </dependency>
+	
+		<!-- JETTY Dependencies -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
@@ -18,19 +34,18 @@
 			<artifactId>jetty-servlet</artifactId>
 			<version>9.3.12.v20160915</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-util -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-util</artifactId>
 			<version>9.3.12.v20160915</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-servlets -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlets</artifactId>
 			<version>9.3.12.v20160915</version>
 		</dependency>
 
+		<!-- JERSEY Dependencies -->
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
@@ -41,26 +56,31 @@
 			<artifactId>jersey-container-jetty-http</artifactId>
 			<version>2.23.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.zookeeper/zookeeper -->
+		
+		<!-- Zookeper and Curator related Dependencies -->
 		<dependency>
 			<groupId>org.apache.zookeeper</groupId>
 			<artifactId>zookeeper</artifactId>
 			<version>3.4.9</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.curator</groupId>
+		    <artifactId>curator-framework</artifactId>
+		    <version>2.5.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.curator</groupId>
+		    <artifactId>curator-x-discovery</artifactId>
+		    <version>2.5.0</version>
+		</dependency>
 
-<!-- https://mvnrepository.com/artifact/org.apache.curator/curator-framework -->
-<dependency>
-    <groupId>org.apache.curator</groupId>
-    <artifactId>curator-framework</artifactId>
-    <version>2.5.0</version>
-</dependency>
-<!-- https://mvnrepository.com/artifact/org.apache.curator/curator-x-discovery -->
-<dependency>
-    <groupId>org.apache.curator</groupId>
-    <artifactId>curator-x-discovery</artifactId>
-    <version>2.5.0</version>
-</dependency>
-
+	
+		<!--  Dependency for Eureka -->
+		<dependency>
+			<groupId>com.netflix.eureka</groupId>
+			<artifactId>eureka-client</artifactId>
+			<version>1.2.0</version>
+		</dependency> 
 
 
 		<dependency>
@@ -104,7 +124,7 @@
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
 			<version>1.19</version>
-			<scope>test</scope>
+			<!-- <scope>test</scope> -->
 		</dependency>
 
 	</dependencies>
