@@ -4,8 +4,6 @@ package io.globomart.prodcat;
 //c:\Work\nginx>..\consul-template\consul-template.exe -consul localhost:8500 -template "conf\prodcat-template.ctmpl:conf\prodcat.conf:nginx.e
 //xe -s reload"
 import java.util.EnumSet;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -28,13 +26,11 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import com.netflix.appinfo.ApplicationInfoManager;
-import com.netflix.appinfo.CloudInstanceConfig;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.appinfo.MyDataCenterInstanceConfig;
 import com.netflix.appinfo.providers.EurekaConfigBasedInstanceInfoProvider;
 import com.netflix.discovery.DefaultEurekaClientConfig;
 import com.netflix.discovery.DiscoveryClient;
-import com.netflix.discovery.DiscoveryManager;
 import com.netflix.discovery.EurekaClient;
 import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
@@ -52,8 +48,8 @@ public class App {
 		
 		
 
-		int port = 0;
-		int instanceId=0;
+		int port = 2400;
+		int instanceId=1;
 		if (args.length > 1) {
 			port = Integer.valueOf(args[0]);
 			instanceId = Integer.valueOf(args[1]);
@@ -66,7 +62,7 @@ public class App {
 			server.start();
 			//registerServiceInZK(port);
 			//registerServiceInConsul(port,instanceId);
-			registerServiceInEureka(port,instanceId);
+			//registerServiceInEureka(port,instanceId);
 			server.join();
 		} catch (Exception e) {
 			e.printStackTrace();

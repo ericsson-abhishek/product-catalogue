@@ -15,11 +15,28 @@
     </repository>
 </repositories>
 	<dependencies>
+	<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>19.0</version>
+</dependency>
+<dependency>
+    <groupId>com.google.inject</groupId>
+    <artifactId>guice</artifactId>
+    <version>4.1.0</version>
+</dependency>
+	
 		<!--  Dependency for Consul -->
 	    <dependency>
 	        <groupId>com.orbitz.consul</groupId>
 	        <artifactId>consul-client</artifactId>
 	        <version>0.13.2</version>
+	        <exclusions>
+	        	<exclusion>
+	        		<artifactId>guava</artifactId>
+	        		<groupId>com.google.guava</groupId>
+	        	</exclusion>
+	        </exclusions>
 	    </dependency>
 	
 		<!-- JETTY Dependencies -->
@@ -67,11 +84,23 @@
 		    <groupId>org.apache.curator</groupId>
 		    <artifactId>curator-framework</artifactId>
 		    <version>2.5.0</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<artifactId>guava</artifactId>
+		    		<groupId>com.google.guava</groupId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 		<dependency>
 		    <groupId>org.apache.curator</groupId>
 		    <artifactId>curator-x-discovery</artifactId>
 		    <version>2.5.0</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<artifactId>guava</artifactId>
+		    		<groupId>com.google.guava</groupId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 
 	
@@ -79,7 +108,18 @@
 		<dependency>
 			<groupId>com.netflix.eureka</groupId>
 			<artifactId>eureka-client</artifactId>
-			<version>1.2.0</version>
+			<version>1.5.6</version>
+
+			<exclusions>
+				<exclusion>
+					<artifactId>guava</artifactId>
+					<groupId>com.google.guava</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>guice</artifactId>
+					<groupId>com.google.inject</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency> 
 
 
@@ -87,6 +127,12 @@
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-jersey2-jaxrs</artifactId>
 			<version>1.5.4</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>guava</artifactId>
+					<groupId>com.google.guava</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -141,7 +187,27 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+  <groupId>org.codehaus.mojo</groupId>
+  <artifactId>exec-maven-plugin</artifactId>
+  <version>1.2.1</version>
+  <executions>
+    <execution>
+      <goals>
+        <goal>java</goal>
+      </goals>
+    </execution>
+  </executions>
+  <configuration>
+    <mainClass>io.globomart.prodcat.App</mainClass>
+    <!-- <arguments>
+      <argument>foo</argument>
+      <argument>bar</argument>
+    </arguments> -->
+  </configuration>
+</plugin>
 		</plugins>
+		
 	</build>
 
 </project>
