@@ -4,41 +4,41 @@
 	<groupId>io.globommart.product.catalogue</groupId>
 	<artifactId>product-catalogue</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-<repositories>
-    <repository>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <id>central</id>
-        <name>bintray</name>
-        <url>http://jcenter.bintray.com</url>
-    </repository>
-</repositories>
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>bintray</name>
+			<url>http://jcenter.bintray.com</url>
+		</repository>
+	</repositories>
 	<dependencies>
-	<dependency>
-    <groupId>com.google.guava</groupId>
-    <artifactId>guava</artifactId>
-    <version>19.0</version>
-</dependency>
-<dependency>
-    <groupId>com.google.inject</groupId>
-    <artifactId>guice</artifactId>
-    <version>4.1.0</version>
-</dependency>
-	
-		<!--  Dependency for Consul -->
-	    <dependency>
-	        <groupId>com.orbitz.consul</groupId>
-	        <artifactId>consul-client</artifactId>
-	        <version>0.13.2</version>
-	        <exclusions>
-	        	<exclusion>
-	        		<artifactId>guava</artifactId>
-	        		<groupId>com.google.guava</groupId>
-	        	</exclusion>
-	        </exclusions>
-	    </dependency>
-	
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>19.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+
+		<!-- Dependency for Consul -->
+		<dependency>
+			<groupId>com.orbitz.consul</groupId>
+			<artifactId>consul-client</artifactId>
+			<version>0.13.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>guava</artifactId>
+					<groupId>com.google.guava</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<!-- JETTY Dependencies -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
@@ -73,7 +73,7 @@
 			<artifactId>jersey-container-jetty-http</artifactId>
 			<version>2.23.2</version>
 		</dependency>
-		
+
 		<!-- Zookeper and Curator related Dependencies -->
 		<dependency>
 			<groupId>org.apache.zookeeper</groupId>
@@ -81,30 +81,30 @@
 			<version>3.4.9</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.curator</groupId>
-		    <artifactId>curator-framework</artifactId>
-		    <version>2.5.0</version>
-		    <exclusions>
-		    	<exclusion>
-		    		<artifactId>guava</artifactId>
-		    		<groupId>com.google.guava</groupId>
-		    	</exclusion>
-		    </exclusions>
+			<groupId>org.apache.curator</groupId>
+			<artifactId>curator-framework</artifactId>
+			<version>2.5.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>guava</artifactId>
+					<groupId>com.google.guava</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.curator</groupId>
-		    <artifactId>curator-x-discovery</artifactId>
-		    <version>2.5.0</version>
-		    <exclusions>
-		    	<exclusion>
-		    		<artifactId>guava</artifactId>
-		    		<groupId>com.google.guava</groupId>
-		    	</exclusion>
-		    </exclusions>
+			<groupId>org.apache.curator</groupId>
+			<artifactId>curator-x-discovery</artifactId>
+			<version>2.5.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>guava</artifactId>
+					<groupId>com.google.guava</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
-	
-		<!--  Dependency for Eureka -->
+
+		<!-- Dependency for Eureka -->
 		<dependency>
 			<groupId>com.netflix.eureka</groupId>
 			<artifactId>eureka-client</artifactId>
@@ -120,7 +120,7 @@
 					<groupId>com.google.inject</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency> 
+		</dependency>
 
 
 		<dependency>
@@ -188,26 +188,47 @@
 				</configuration>
 			</plugin>
 			<plugin>
-  <groupId>org.codehaus.mojo</groupId>
-  <artifactId>exec-maven-plugin</artifactId>
-  <version>1.2.1</version>
-  <executions>
-    <execution>
-      <goals>
-        <goal>java</goal>
-      </goals>
-    </execution>
-  </executions>
-  <configuration>
-    <mainClass>io.globomart.prodcat.App</mainClass>
-    <!-- <arguments>
-      <argument>foo</argument>
-      <argument>bar</argument>
-    </arguments> -->
-  </configuration>
-</plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>io.globomart.prodcat.App</mainClass>
+					<!-- <arguments> <argument>foo</argument> <argument>bar</argument> </arguments> -->
+				</configuration>
+			</plugin>
+			<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <finalName>prodcat</finalName>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+              <archive>
+                <manifest>
+                  <mainClass>io.globomart.prodcat.App</mainClass>
+                </manifest>
+              </archive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+			
 		</plugins>
-		
+
 	</build>
 
 </project>
